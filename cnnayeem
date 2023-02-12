@@ -131,3 +131,131 @@ for i in range(0,len(subnet_mask)):
     a = format(int(subnet_mask[i]),'08b')
     subnet_bin.append(a)    
 print(subnet_bin)
+
+SUBNET AND CALCULATIONS
+
+host_id=list(input("enter host id:").split("."))
+network_mask=list(input("enter network mask id:").split("."))
+subnet_mask=list(input("enter the sub net mask:").split("."))
+
+host_bin=[]
+for i in range(0,len(host_id)):
+    a = format(int(host_id[i]),'08b')
+    host_bin.append(a) 
+    
+print(host_bin)
+
+net_bin=[]
+for i in range(0,len(network_mask)):
+    a = format(int(network_mask[i]),'08b')
+    net_bin.append(a)    
+print(net_bin)
+
+
+
+subnet_bin=[]
+for i in range(0,len(subnet_mask)):
+    a = format(int(subnet_mask[i]),'08b')
+    subnet_bin.append(a)    
+print(subnet_bin)
+
+
+
+////
+import math
+
+def findClass(ip):
+    if(ip[0] >= 0 and ip[0] <= 127):
+    	return "A"
+
+    elif(ip[0] >=128 and ip[0] <= 191):
+    	return "B"
+
+    elif(ip[0] >= 192 and ip[0] <= 223):
+    	return "C"
+
+    elif(ip[0] >= 224 and ip[0] <= 239):
+    	return "D"
+
+    else:
+    	return "E"
+    
+def specialAddress(ip):
+    if(ip[0]==ip[1]==ip[2]==ip[3]==0):
+        return "All zero address"
+    elif(ip[0]==ip[1]==ip[2]==ip[3]==1):
+        return "All one address"
+    elif(ip[0]==127):
+        return "Loopback address"
+    elif(ip[0]==10):
+        return "private address"
+    elif(ip[0]==172 and 16<=ip[1]<=31):
+        return "private address"
+    elif(ip[0]==192 and ip[1]==168):
+        return "private address"
+    
+def maskNetId(a):
+    if(0<int(a[0])<127):
+        print("class A")
+        l=list()
+        k=list()
+        b=int(a[0]) & 255
+        l.append(b)
+        k.append(255)
+        for i in range(1,len(a)):
+            b=int(a[i]) & 0
+            l.append(b)
+            k.append(0)
+        print("netid",l)
+        print("mask id",k)
+    elif(128<=int(a[0])<=191):
+        print("class B")
+        l=list()
+        k=list()
+        for i in range(0,2):
+            b=int(a[i]) & 255
+            l.append(b)
+            k.append(255)
+        for i in range(2,len(a)):
+            b=int(a[i]) & 0
+            l.append(b)
+            k.append(0)
+        print("netid",l)
+        print("mask id",k)
+    elif(192<=int(a[0])<=223):
+        print("class C")
+        l=list()
+        k=list()
+        for i in range(0,3):
+            b=int(a[i]) & 255
+            l.append(b)
+            k.append(255)
+        for i in range(3,len(a)):
+            b=int(a[i]) & 0
+            l.append(b)
+            k.append(0)
+        print("netid",l)
+        print("mask id",k)
+    elif(224<=int(a[0])<=239):
+        print("class D")
+    elif(240<=int(a[0])<=255):
+        print("class E")
+    else:
+        print("invalid address")    
+    
+
+ip=list(input("Enter the IP address :").split("."))
+
+ip=[int(i) for i in ip]
+
+
+
+print("IP CLASS")
+className=findClass(ip)
+print("The ip belongs to class ",className)
+
+specialAdd=specialAddress(ip)
+print("Special Address ",specialAdd)
+
+maskNetId(ip)
+
