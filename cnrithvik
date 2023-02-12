@@ -1,0 +1,67 @@
+import socket
+import struct
+
+def fragment_datagram(datagram, max_size):
+    fragments = []
+    fragment_offset = 0
+    while fragment_offset < len(datagram):
+        fragment = datagram[fragment_offset: fragment_offset + max_size]
+        fragments.append(fragment)
+        fragment_offset += max_size
+    return fragments
+
+def pack_fragment(fragment, fragment_offset):
+    return struct.pack('!H', fragment_offset) + fragment
+
+def unpack_fragment(packed_fragment):
+    fragment_offset = struct.unpack('!H', packed_fragment[:2])[0]
+    fragment = packed_fragment[2:]
+    return fragment, fragment_offset
+
+def reassemble_datagram(fragments):
+    reassembled_datagram = b''
+    for fragment in sorted(fragments, key=lambda x: x[1]):
+        reassembled_datagram += fragment[0]
+    return reassembled_datagram
+
+def server_program():
+    server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    server_socket.bind(('localhost', 5000))
+    server_socket.listen()
+
+    print("Server is ready to receive data...")
+
+    connection, address = server_socket.accept()
+
+    fragments = []
+    while True:
+        packed_fragment = connection.recv(1024)
+        if not packed_fragment:
+            break
+        fragment, fragment_offset = unpack_fragment(packed_fragment)
+        fragments.append((fragment, fragment_offset))
+
+    reassembled_datagram = reassemble_datagram(fragments)
+    with open('received_file.txt', 'wb') as file:
+        file.write(reassembled_datagram)
+    print("Received file is saved as received_file.txt")
+    connection.close()
+
+def client_program():
+    client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    client_socket.connect(('localhost', 5000))
+
+    with open('sample_file.txt', 'rb') as file:
+        original_datagram = file.read()
+    max_size = 20
+
+    fragments = fragment_datagram(original_datagram, max_size)
+    packed_fragments = [pack_fragment(fragment, fragment_offset) for fragment, fragment_offset in zip(fragments, range(0, len(original_datagram), max_size))]
+
+    for packed_fragment in packed_fragments:
+        client_socket.sendall(packed_fragment)
+
+    client_socket.close()
+
+if __name__ == '__main__':
+    server_program()
