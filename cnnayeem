@@ -1,0 +1,133 @@
+CLIENT SERVER EXERCISE
+import socket
+serversocket=socket.socket(socket.AF_INET,socket.SOCK_STREAM)
+host=socket.gethostname()
+port=9929
+serversocket.bind((host,port))
+serversocket.listen(5)
+flag=1
+flag1=1
+while flag:
+    clientsocket,add=serversocket.accept()
+    print("got connection from %s"%str(add))
+    while flag1:
+        message=input()
+        clientsocket.send(message.encode('ascii'))
+        tm = clientsocket.recv(1024)
+        print(tm.decode('ascii'))
+        if (message=='bye'):
+            flag1=0
+        if(tm.decode('ascii')=='bye'):
+            message='bye'
+            clientsocket.send(message.encode('ascii'))
+            flag=0
+clientsocket.close()
+////////
+client
+
+import socket
+s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+host ='10.1.66.133'
+port = 9928
+flag=1
+flag1=1
+while flag:
+    s.connect((host, port))
+    while flag1:
+        tm = s.recv(1024)
+        print(tm.decode('ascii'))
+        message=input("enter the mesage to send:")
+        s.send(message.encode('ascii'))
+        if (message=='bye'):
+            flag1=0
+        if(tm.decode('ascii')=='bye'):
+            message='bye'
+            s.send(message.encode('ascii'))
+            flag=0
+s.close()
+
+CLIENT SERVER EXERCISE(FRAGMENTATION)
+import socket
+
+server = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
+HOST = socket.gethostname()
+PORT = 9999
+server.bind((HOST,PORT))
+server.listen(5)
+client,addr = server.accept()
+message = ""
+
+while True:
+    data = client.recv(1024)
+    print(data)
+    if not data:
+        break
+    message += data.decode()
+    
+print("Reassembled message: ", message)
+
+client.close()
+
+server.close()
+ 
+    
+
+
+//CLIENTT
+
+import socket
+
+server = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
+
+HOST = socket.gethostname()
+
+PORT = 9999
+
+server.connect((HOST,PORT))
+
+msg = input("Enter the message here >>")
+
+#LENGTH OF BYTES
+from sys import getsizeof
+
+length = getsizeof(msg)
+
+print(length)
+
+MTU_SIZE = int(input("Enter the MTU size : "))
+        
+msg = bytes(msg,"utf-8")
+        
+fragments = [msg[i:i + MTU_SIZE] for i in range(0, len(msg), MTU_SIZE)]
+        
+for fragment in fragments:
+   print(fragment)
+   server.sendall(fragment)
+
+server.close()
+
+IP SUBNET CALCULATOR
+host_id=list(input("enter host id:").split("."))
+network_mask=list(input("enter network mask id:").split("."))
+subnet_mask=list(input("enter the sub net mask:").split("."))
+
+host_bin=[]
+for i in range(0,len(host_id)):
+    a = format(int(host_id[i]),'08b')
+    host_bin.append(a) 
+    
+print(host_bin)
+
+net_bin=[]
+for i in range(0,len(network_mask)):
+    a = format(int(network_mask[i]),'08b')
+    net_bin.append(a)    
+print(net_bin)
+
+
+
+subnet_bin=[]
+for i in range(0,len(subnet_mask)):
+    a = format(int(subnet_mask[i]),'08b')
+    subnet_bin.append(a)    
+print(subnet_bin)
