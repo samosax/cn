@@ -1,0 +1,45 @@
+import heapq
+
+def dijkstra(graph, start):
+    distances = {node: float('inf') for node in graph}
+    distances[start] = 0
+    heap = [(0, start)]
+   
+    while heap:
+        (distance, current_node) = heapq.heappop(heap)
+       
+        if distance > distances[current_node]:
+            continue
+       
+        for neighbor, weight in graph[current_node].items():
+            distance_to_neighbor = distance + weight
+           
+            if distance_to_neighbor < distances[neighbor]:
+                distances[neighbor] = distance_to_neighbor
+                heapq.heappush(heap, (distance_to_neighbor, neighbor))
+   
+    return distances
+
+
+# Example graph
+graph = {
+    'A': {'B': 4, 'C': 2},
+    'B': {'A': 4, 'C': 1, 'D': 5},
+    'C': {'A': 2, 'B': 1, 'D': 8, 'E': 10},
+    'D': {'B': 5, 'C': 8, 'E': 2},
+    'E': {'C': 10, 'D': 2}
+}
+
+# Starting node
+start_node = 'A'
+
+# Calculate shortest distances
+shortest_distances = dijkstra(graph, start_node)
+
+# Print table of shortest distances
+print("Shortest distances from node", start_node)
+print("-----------------------------")
+print("Node\tDistance")
+print("-----------------------------")
+for node, distance in shortest_distances.items():
+    print(node, "\t", distance)
