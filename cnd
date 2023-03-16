@@ -105,3 +105,61 @@ graph = {
 }
 a = dijkstra_shortest_path(graph, 'A', 'D')
 print(a)
+
+//Neme
+import heapq
+
+
+def dijkstra_shortest_path(graph, start, end):
+    """
+    Dijkstra's shortest path algorithm with path reconstruction.
+
+    :param graph: a dictionary representing the graph in adjacency list format
+    :param start: the starting node
+    :param end: the ending node
+    :return: a tuple containing the shortest distance and the path from start to end
+    """
+    # Initialize distances and parents
+    distances = {node: float('inf') for node in graph}
+    print(distances)
+    parents = {node: None for node in graph}
+    print(parents)
+    distances[start] = 0
+
+    # Initialize heap with start node
+    heap = [(0, start)]
+
+    # Dijkstra's algorithm
+    while heap:
+        current_distance, current_node = heapq.heappop(heap)
+
+        # Stop if end node is reached
+        if current_node == end:
+            # Reconstruct path from parents dictionary
+            path = []
+            while current_node is not None:
+                path.append(current_node)
+                current_node = parents[current_node]
+            path.reverse()
+            return distances[end], path
+
+        # Process neighboring nodes
+        for neighbor, weight in graph[current_node].items():
+            distance = current_distance + weight
+            if distance < distances[neighbor]:
+                distances[neighbor] = distance
+                parents[neighbor] = current_node
+                heapq.heappush(heap, (distance, neighbor))
+
+    # End node was not reached
+    return float('inf'), None
+
+
+graph = {
+    'A': {'B': 1, 'D': 4},
+    'B': {'A': 1, 'C': 3, 'D': 2},
+    'C': {'B': 3, 'D': 5},
+    'D': {'A': 4, 'B': 2, 'C': 5}
+}
+a = dijkstra_shortest_path(graph, 'A', 'D')
+print(a)
